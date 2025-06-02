@@ -1,0 +1,2 @@
+# musescore
+MuseScore plugins
