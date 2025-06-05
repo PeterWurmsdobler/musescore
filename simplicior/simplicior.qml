@@ -19,8 +19,9 @@ import MuseScore 3.0
 import Muse.Ui
 import Muse.UiComponents
 
+import "./src/tpc.js" as Tpc
+import "./src/note.js" as Note
 import "./src/helpers.js" as Helpers
-import "./src/notecolour.js" as NoteColour
 
 MuseScore {
     version: "3.5"
@@ -42,9 +43,27 @@ MuseScore {
     property color flatColour: "red"
     property color sharpColour: "blue"
 
+    function noteColour(note) {
+        if (Tpc.isFlat(note))
+            Note.setColour(note, selectionFlat.theColour);
+        else if (Tpc.isSharp(note))
+            Note.setColour(note, selectionSharp.theColour);
+    }
+
     function doApply() {
         console.log("Hello Simplicior");
-    // Helpers.applyToNotesInSelection(NoteColour.noteColour);
+        if (enharmonicCheck.checked) {
+            Helpers.applyToNotesInSelection(Tpc.forceEnharmonic);
+        }
+        if (trebleClefOnlyCheck.checked)
+        // TODO
+        {}
+        if (colourCodedNonNaturalsCheck.checked) {
+            Helpers.applyToNotesInSelection(noteColour);
+        }
+        if (shapeCodedNonNaturalsCheck.checked)
+        // TODO
+        {}
     }
 
     ColumnLayout {
