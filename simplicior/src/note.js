@@ -15,5 +15,20 @@ function setColour(note, newColour) {
             }
         }
     }
-    console.log("setNoteColour: " + note.tpc);
+    console.log("setColour: " + newColour);
+}
+
+function setShape(note, newShape) {
+    //set the note shape
+    if (newShape === "sharp") {
+        // note.headScheme = NoteHead.Scheme.HEAD_SOLFEGE
+        note.headGroup = 18//NoteHead.Group.HEAD_LA; // Square
+        note.offsetY = -0.25; // Sharp notes are drawn higher
+    }
+    else if (newShape === "flat") {
+        // note.headScheme = NoteHead.Scheme.HEAD_SOLFEGE
+        note.headGroup = 18//NoteHead.Group.HEAD_LA; // Square
+        note.offsetY = 0.25; // Flat notes are drawn lower
+    }
+    console.log("setShape: " + newShape);
 }
