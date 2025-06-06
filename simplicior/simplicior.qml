@@ -64,10 +64,46 @@ MuseScore {
         Helpers.applyToNotesInSelection(processNote);
     }
 
+    function listNotesInAllMeasures() {
+        if (!curScore) {
+            console.log("No score is open.");
+            return;
+        }
+
+        console.log("Iterating through all measures in all staves...");
+
+        // Iterate through all staves in the score
+        for (let staffIndex = 0; staffIndex < curScore.staves.length; staffIndex++) {
+            let staff = curScore.staves[staffIndex];
+            console.log("Staff " + (staffIndex + 1) + ":");
+
+            // Iterate through all measures in the staff
+            for (let measureIndex = 0; measureIndex < staff.measures.length; measureIndex++) {
+                let measure = staff.measures[measureIndex];
+                console.log("  Measure " + (measureIndex + 1) + ":");
+
+                // Iterate through all elements in the measure
+                for (let elementIndex = 0; elementIndex < measure.elements.length; elementIndex++) {
+                    let element = measure.elements[elementIndex];
+
+                    // Check if the element is a note
+                    if (element.type === Element.Note) {
+                        console.log("    Note: pitch=" + element.pitch + ", duration=" + element.duration);
+                    }
+                }
+            }
+        }
+    }
+
+
     ColumnLayout {
         id: main
         spacing: 2
 
+        Button {
+            text: qsTr("List Notes in All Measures")
+            onClicked: listNotesInAllMeasures()
+        }
         CheckBox {
             id: enharmonicCheck
             checked: enharmonic
