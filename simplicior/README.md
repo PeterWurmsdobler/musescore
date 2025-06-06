@@ -20,7 +20,7 @@ The ambiguity of traditional notation is obvious: one position on the staff can 
 
 ![Traditional](images/traditional-notation-issues.png)
 
-## Mititgation
+## Mitigation
 
 For some applications, this notation could be adapted and small modification could address some shortcomings while remaining compatible with the traditional notation system. They could lower the entrance barrier and reduce the cognitive load on our brain.
 
@@ -31,7 +31,7 @@ The simple rule is to use only one clef, the treble clef as it is the most commo
 ![SingleClef](images/sonata-single-clef.png)
 
 
-### Colour-Coded non-naturals
+### Colour-Coded Non-Naturals
 
 If a piece is written with sharps or flats (non-naturals), an affected note later down the staff on a line or space does not sound as written at that point, something hard to keep in mind for a beginner. Colouring those flats and sharps shows which notes are altered in what way:
 

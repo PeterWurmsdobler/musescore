@@ -13,7 +13,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs
 
 import MuseScore 3.0
 import Muse.Ui
