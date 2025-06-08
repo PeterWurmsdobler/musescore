@@ -108,34 +108,40 @@ MuseScore {
             id: enharmonicCheck
             checked: enharmonic
             text: qsTr("Enforce Enharmonics")
+            onClicked: {enharmonicCheck.checked = !enharmonicCheck.checked}
             onCheckedChanged: enharmonic = checked
         }
         CheckBox {
             id: trebleClefOnlyCheck
             checked: trebleClefOnly
-            text: qsTr("Treble Clef Conly")
+            text: qsTr("Treble Clef Only")
+            onClicked: {trebleClefOnlyCheck.checked = !trebleClefOnlyCheck.checked}
             onCheckedChanged: trebleClefOnly = checked
         }
         CheckBox {
             id: colourCodedNonNaturalsCheck
             checked: colourCodedNonNaturals
             text: qsTr("Colour code non-naturals")
+            onClicked: {colourCodedNonNaturalsCheck.checked = !colourCodedNonNaturalsCheck.checked}
             onCheckedChanged: colourCodedNonNaturals = checked
         }
         ColourSelection {
             id: selectionFlat
             title: qsTr("Flats:")
             colour: flatColour
+            enabled: colourCodedNonNaturals
         }
         ColourSelection {
             id: selectionSharp
             title: qsTr("Sharps:")
             colour: sharpColour
+            enabled: colourCodedNonNaturals
         }
         CheckBox {
             id: shapeCodedNonNaturalsCheck
             checked: shapeCodedNonNaturals
             text: qsTr("Shape code non-naturals")
+            onClicked: {shapeCodedNonNaturalsCheck.checked = !shapeCodedNonNaturalsCheck.checked}
             onCheckedChanged: shapeCodedNonNaturals = checked
         }
 
