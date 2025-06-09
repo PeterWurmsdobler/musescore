@@ -35,7 +35,7 @@ MuseScore {
 
     onRun: {}
 
-    property bool enharmonic: true
+    property bool enforceEnharmonic: true
     property bool trebleClefOnly: true
     property bool colourCodedNonNaturals: true
     property bool shapeCodedNonNaturals: true
@@ -43,7 +43,7 @@ MuseScore {
     property color sharpColour: "blue"
 
     function processNote(note) {
-        if (enharmonic) {
+        if (enforceEnharmonic) {
             Tpc.forceEnharmonic(note);
         }
         if (Tpc.isFlat(note)) {
@@ -105,25 +105,22 @@ MuseScore {
             onClicked: listNotesInAllMeasures()
         }
         CheckBox {
-            id: enharmonicCheck
-            checked: enharmonic
+            id: enforceEnharmonicCheck
+            checked: enforceEnharmonic
             text: qsTr("Enforce Enharmonics")
-            onClicked: {enharmonicCheck.checked = !enharmonicCheck.checked}
-            onCheckedChanged: enharmonic = checked
+            onClicked: {enforceEnharmonic = !enforceEnharmonic}
         }
         CheckBox {
             id: trebleClefOnlyCheck
             checked: trebleClefOnly
             text: qsTr("Treble Clef Only")
-            onClicked: {trebleClefOnlyCheck.checked = !trebleClefOnlyCheck.checked}
-            onCheckedChanged: trebleClefOnly = checked
+            onClicked: {trebleClefOnly = !trebleClefOnly}
         }
         CheckBox {
             id: colourCodedNonNaturalsCheck
             checked: colourCodedNonNaturals
             text: qsTr("Colour code non-naturals")
-            onClicked: {colourCodedNonNaturalsCheck.checked = !colourCodedNonNaturalsCheck.checked}
-            onCheckedChanged: colourCodedNonNaturals = checked
+            onClicked: {colourCodedNonNaturals = !colourCodedNonNaturals}
         }
         ColourSelection {
             id: selectionFlat
@@ -141,8 +138,7 @@ MuseScore {
             id: shapeCodedNonNaturalsCheck
             checked: shapeCodedNonNaturals
             text: qsTr("Shape code non-naturals")
-            onClicked: {shapeCodedNonNaturalsCheck.checked = !shapeCodedNonNaturalsCheck.checked}
-            onCheckedChanged: shapeCodedNonNaturals = checked
+            onClicked: {shapeCodedNonNaturals = !shapeCodedNonNaturals}
         }
 
         FlatButton {
@@ -156,7 +152,7 @@ MuseScore {
     Settings {
         id: settings
         category: "PluginSimplicior"
-        property alias enharmonic: enharmonicCheck.checked
+        property alias enforceEnharmonic: enforceEnharmonicCheck.checked
         property alias trebleClefOnly: trebleClefOnlyCheck.checked
         property alias colourCodedNonNaturals: colourCodedNonNaturalsCheck.checked
         property alias shapeCodedNonNaturals: shapeCodedNonNaturalsCheck.checked
