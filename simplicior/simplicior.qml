@@ -65,36 +65,24 @@ MuseScore {
     }
 
     function listNotesInAllMeasures() {
-        if (!curScore) {
-            console.log("No score is open.");
-            return;
-        }
-
         console.log("Iterating through all measures in all staves...");
 
-        // Iterate through all staves in the score
-        for (let staffIndex = 0; staffIndex < curScore.staves.length; staffIndex++) {
-            let staff = curScore.staves[staffIndex];
-            console.log("Staff " + (staffIndex + 1) + ":");
+        curScore.startCmd();
+        var measure = curScore.firstMeasure;
+        var measureCount = 1;
+        while (measure) {
+            console.log("measure:");
+            var segment = measure.firstSegment;
+            while (segment) {
+                console.log("segment: " + segment.tick + ", type: " + segment.type);
 
-            // Iterate through all measures in the staff
-            for (let measureIndex = 0; measureIndex < staff.measures.length; measureIndex++) {
-                let measure = staff.measures[measureIndex];
-                console.log("  Measure " + (measureIndex + 1) + ":");
-
-                // Iterate through all elements in the measure
-                for (let elementIndex = 0; elementIndex < measure.elements.length; elementIndex++) {
-                    let element = measure.elements[elementIndex];
-
-                    // Check if the element is a note
-                    if (element.type === Element.Note) {
-                        console.log("    Note: pitch=" + element.pitch + ", duration=" + element.duration);
-                    }
-                }
+                segment = segment.nextInMeasure;
             }
+            measure = measure.nextMeasure;
+            ++measureCount;
         }
+        curScore.endCmd();
     }
-
 
     ColumnLayout {
         id: main
@@ -108,19 +96,25 @@ MuseScore {
             id: enforceEnharmonicCheck
             checked: enforceEnharmonic
             text: qsTr("Enforce Enharmonics")
-            onClicked: {enforceEnharmonic = !enforceEnharmonic}
+            onClicked: {
+                enforceEnharmonic = !enforceEnharmonic;
+            }
         }
         CheckBox {
             id: trebleClefOnlyCheck
             checked: trebleClefOnly
             text: qsTr("Treble Clef Only")
-            onClicked: {trebleClefOnly = !trebleClefOnly}
+            onClicked: {
+                trebleClefOnly = !trebleClefOnly;
+            }
         }
         CheckBox {
             id: colourCodedNonNaturalsCheck
             checked: colourCodedNonNaturals
             text: qsTr("Colour code non-naturals")
-            onClicked: {colourCodedNonNaturals = !colourCodedNonNaturals}
+            onClicked: {
+                colourCodedNonNaturals = !colourCodedNonNaturals;
+            }
         }
         ColourSelection {
             id: selectionFlat
@@ -138,7 +132,9 @@ MuseScore {
             id: shapeCodedNonNaturalsCheck
             checked: shapeCodedNonNaturals
             text: qsTr("Shape code non-naturals")
-            onClicked: {shapeCodedNonNaturals = !shapeCodedNonNaturals}
+            onClicked: {
+                shapeCodedNonNaturals = !shapeCodedNonNaturals;
+            }
         }
 
         FlatButton {
