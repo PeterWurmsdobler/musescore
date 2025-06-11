@@ -64,34 +64,10 @@ MuseScore {
         Helpers.applyToNotesInSelection(processNote);
     }
 
-    function listNotesInAllMeasures() {
-        console.log("Iterating through all measures in all staves...");
-
-        curScore.startCmd();
-        var measure = curScore.firstMeasure;
-        var measureCount = 1;
-        while (measure) {
-            console.log("measure:");
-            var segment = measure.firstSegment;
-            while (segment) {
-                console.log("segment: " + segment.tick + ", type: " + segment.type);
-
-                segment = segment.nextInMeasure;
-            }
-            measure = measure.nextMeasure;
-            ++measureCount;
-        }
-        curScore.endCmd();
-    }
-
     ColumnLayout {
         id: main
         spacing: 2
 
-        Button {
-            text: qsTr("List Notes in All Measures")
-            onClicked: listNotesInAllMeasures()
-        }
         CheckBox {
             id: enforceEnharmonicCheck
             checked: enforceEnharmonic
