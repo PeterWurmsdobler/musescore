@@ -47,6 +47,15 @@ MuseScore {
             131072: "EndBarLine"
         });
 
+        const accidentalType = new Map([
+            [Accidental.NONE, "None"],
+            [Accidental.FLAT, "Flat"],
+            [Accidental.NATURAL, "Natural"],
+            [Accidental.SHARP, "Sharp"],
+            [Accidental.SHARP2, "Double Sharp"],
+            [Accidental.FLAT2, "Double Flat"],
+        ]);
+
         const tpcNames = new Map([
             [-1, "F♭♭"],
             [0, "C♭♭"],
@@ -107,7 +116,8 @@ MuseScore {
                         		var octave = Math.floor(note.pitch / 12) - 1;
                                 log(4, "Note: " + tpcNames.get(note.tpc) + octave 
                                     + ", pitch: " + note.pitch  + ", track: " + trackIndex
-                                    + ", staff: " + (trackIndex / 4) + ", voice: " + note.voice);
+                                    + ", staff: " + (trackIndex / 4) + ", voice: " + note.voice
+                                    + ", accidentalType: " + accidentalType.get(note.accidentalType));
                             }
                         } else if (element.type === Element.REST) {
                             log(3, "Rest: duration: " 
@@ -116,6 +126,10 @@ MuseScore {
                         } else if (element.type === Element.TIMESIG) {
                             log(3, "Timing: " + measure.timesigActual.ticks + ", " 
                                 + measure.timesigActual.numerator + "/" + measure.timesigActual.denominator);
+                        } else if (element.type === Element.HEADERCLEF) {
+                            log(3, "Header clef " + element.clefType + " at staff " + trackIndex/4);
+                        } else if (element.type === Element.CLEF) {
+                            log(3, "Clef " + element.clefType + " at staff " + trackIndex/4);
                         }
                     }
                 }
