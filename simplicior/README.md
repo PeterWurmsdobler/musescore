@@ -45,6 +45,13 @@ Alternatively, or in addition to colouring non-naturals (including accidentals),
 ![SingleClef](images/sonata-shape-coded.png)
 
 
+### All the way: no accidentals nor key
+
+Once the colour or shape already encodes the fact that a note is sharp or flat, i.e. none of the white keys of the piano keyboard, then the key signature and accidental signs become redunant. The piece can be seen as being written in an atonal way (or C-major) with all notes deviating from a C-major scale being marked:
+
+![Atonal](images/sonata-atonal-no-accidentals.png)
+
+
 ## Installation
 
 ### MuseScore 3.x & 4.x
@@ -53,8 +60,15 @@ Install by copying the `Simplicior` folder into your MuseScore Plugins directory
 
 ## Usage
 
-Selecting `Simplicior` from the MuseScore plugins menu opens up a dialogue window. There you can:
+Selecting `Simplicior` from the MuseScore plugins menu opens up a dialogue window:
 
-- select which of the simplification measures explained above should be applied,
-- in case the colour option is selected, choose the colour for flats and sharps,
-- in case the single clef option is selected, enter minimum number of bars. 
+![Traditional](images/simplicior-plugin-dialog.png)
+
+There you can select the combination of simplifications to be carried out on the selected score, staff(s) or measure(s):
+
+- Enforce Enharmonic: this means in essence that there only 12 notes in a chromatic scale, on a piano seven white keys and 5 black keys. All notes such as double sharps or double flats or some sharps and flats will be resolved to their simplest representation, e.g. a C## is simply a D.
+in case the colour option is selected, choose the colour for flats and sharps,
+- Treble Clef Only: Optimise the score per staff such that a teble cleff (with necessary offsets in octaves) is chosen to keep all notes in a measure close to the centre of the staff (B2, B3, B4 or B5) while also minimising too many changes of clef along a staff. A cost is attributed to such changes. No cost will allow to change clef at every measure if necessary, max cost will minimise the cleff changes.
+- Colour-encoded non-naturals: all non-naturals, i.e. black keys on the piano, will be colour coded, choose the colour for flats and sharps.
+- Shape-encoded non-naturals: all non-naturals, i.e. black keys on the piano, will be shape coded, i.e. will be square note heads.
+- No accidental symbols (only with shape encoded non-naturals): in this case the key will be set to C-major (or atonal), i.e. all non-naturals will be marked with an accidental first. Then all resulting accidentals will be shown in square noteheads.
