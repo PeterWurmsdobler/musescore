@@ -15,7 +15,7 @@
 // applyToNotesInSelection is a general purpose function that applies a
 // function to every note in the current selection or to all notes in the
 // score if there is no selection.  
-export function applyToNotesInSelection(func, arg) {
+function applyToNotesInSelection(func, arg) {
     var selectionWasEmpty = (curScore.selection.elements.length == 0);
     if (selectionWasEmpty) {
         console.log("selectionWasEmpty");
@@ -33,7 +33,7 @@ export function applyToNotesInSelection(func, arg) {
     }
 }
 
-export function log(nIndent, message) {
+function log(nIndent, message) {
     var s = "\t".repeat(nIndent) + message;
     console.log(s);
 }

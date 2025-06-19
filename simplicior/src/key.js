@@ -1,4 +1,9 @@
-import { log } from "./src/helpers.js";
+// import { log } from "./src/helpers.js";
+
+function log(nIndent, message) {
+    var s = "\t".repeat(nIndent) + message;
+    console.log(s);
+}
 
 function setAtonalKeySignature()
 {

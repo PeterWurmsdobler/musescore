@@ -14,36 +14,88 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs // Import for ColorDialog
 
 RowLayout {
     id: root
     property color colour
     property string title
+
     Text {
         text: title
     }
+
     Rectangle {
         id: colourField
         width: 50
         height: 20
         color: colour
     }
+
     Button {
         id: selectButton
         width: 10
         height: 20
         text: "V"
         onClicked: {
-            colorDialog.open(); // Open the color dialog when the button is clicked
-        }       
+            colorPopup.open(); // Open the custom color selection popup
+        }
     }
 
-    ColorDialog {
-        id: colorDialog
-        title: qsTr("Select a Colour")
-        onAccepted: {
-            colour = colorDialog.color; // Update the colour property with the selected color
+    Popup {
+        id: colorPopup
+        modal: true
+        focus: true
+        width: 200
+        height: 200
+        Rectangle {
+            width: parent.width
+            height: parent.height
+            color: "white"
+            ColumnLayout {
+                spacing: 10
+                Text {
+                    text: qsTr("Select a Color")
+                }
+                Slider {
+                    id: redSlider
+                    from: 0
+                    to: 255
+                    value: Qt.rgba(colour.r, colour.g, colour.b, colour.a).r * 255
+                    onValueChanged: {
+                        colour = Qt.rgba(redSlider.value / 255, colour.g, colour.b, colour.a);
+                    }
+                }
+                Slider {
+                    id: greenSlider
+                    from: 0
+                    to: 255
+                    value: Qt.rgba(colour.r, colour.g, colour.b, colour.a).g * 255
+                    onValueChanged: {
+                        colour = Qt.rgba(colour.r, greenSlider.value / 255, colour.b, colour.a);
+                    }
+                }
+                Slider {
+                    id: blueSlider
+                    from: 0
+                    to: 255
+                    value: Qt.rgba(colour.r, colour.g, colour.b, colour.a).b * 255
+                    onValueChanged: {
+                        colour = Qt.rgba(colour.r, colour.g, blueSlider.value / 255, colour.a);
+                    }
+                }
+                Rectangle {
+                    id: resultField
+                    width: 200
+                    height: 20
+                    color: colour
+                }
+                Button {
+                    text: qsTr("Done")
+                    onClicked: {
+                        colorPopup.close(); // Close the popup
+                    }
+                }
+            }
         }
     }
 }
