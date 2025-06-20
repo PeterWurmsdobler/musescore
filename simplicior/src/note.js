@@ -12,7 +12,6 @@
 //  the file LICENCE.GPL
 //=============================================================================
 
-
 function getAccidentalName(accidental) {
     // Return the name of the accidental, or "Unknown" if not found
     // Map the accidental to names

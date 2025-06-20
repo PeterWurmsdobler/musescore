@@ -1,26 +1,35 @@
-// import { log } from "./src/helpers.js";
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Helper functions for Keys
+//
+//  Copyright (c) 2025 Peter Wurmsdobler
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2
+//  as published by the Free Software Foundation and appearing in
+//  the file LICENCE.GPL
+//=============================================================================
 
-function log(nIndent, message) {
-    var s = "\t".repeat(nIndent) + message;
-    console.log(s);
-}
+.import "helpers.js" as Helpers
 
 function setAtonalKeySignature()
 {
-    log(0, "Setting atonal key signature");
+    Helpers.log(0, "Setting atonal key signature");
     var measureIndex = 0;
     var measure = curScore.firstMeasure;
     while (measure) {
-        log(1, "Measure: " + measureIndex);
+        Helpers.log(1, "Measure: " + measureIndex);
         var segment = measure.firstSegment;
         while (segment) {
             for (var trackIndex = 0; trackIndex < curScore.ntracks; ++trackIndex) {
                 var element = segment.elementAt(trackIndex);
                 if (element) {
                     if (element.type === Element.KEYSIG) {
-                        log(2, "Key " + element.key + " at measure " + measureIndex + " at staff " + trackIndex/4);
+                        Helpers.log(2, "Key " + element.key + " at measure " + measureIndex + " at staff " + trackIndex/4);
                         if (element.key !== 12) {
-                            log(3, "Setting atonal key signature");
+                            Helpers.log(3, "Setting atonal key signature");
                             element.key = 12;
                         }
                     }
