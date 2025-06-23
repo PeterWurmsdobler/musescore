@@ -1,7 +1,7 @@
 //=============================================================================
 //  MuseScore
 //  Music Composition & Notation
-// 
+//
 //  A ColourSelection widget
 //
 //  Copyright (c) 2025 Peter Wurmsdobler

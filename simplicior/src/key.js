@@ -14,8 +14,7 @@
 
 .import "helpers.js" as Helpers
 
-function setAtonalKeySignature()
-{
+function setAtonalKeySignature() {
     Helpers.log(0, "Setting atonal key signature");
     var measureIndex = 0;
     var measure = curScore.firstMeasure;
@@ -27,10 +26,11 @@ function setAtonalKeySignature()
                 var element = segment.elementAt(trackIndex);
                 if (element) {
                     if (element.type === Element.KEYSIG) {
-                        Helpers.log(2, "Key " + element.key + " at measure " + measureIndex + " at staff " + trackIndex/4);
+                        Helpers.log(2, "Key " + element.key + " at measure " + measureIndex + " at staff " + trackIndex / 4);
                         if (element.key !== 12) {
                             Helpers.log(3, "Setting atonal key signature");
-                            element.key = 12;
+                            // TODO: assign once API permitts
+                            //element.key = 12;
                         }
                     }
                 }

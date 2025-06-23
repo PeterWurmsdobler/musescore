@@ -21,9 +21,10 @@
 //  the file LICENCE.GPL
 //=============================================================================
 
-.import "helpers.js" as Helpers
-.import "segment.js" as Segment
-.import "clef.js" as Clef
+.import "note.js" as Note
+    .import "helpers.js" as Helpers
+        .import "segment.js" as Segment
+            .import "clef.js" as Clef
 
 function assignReferencePitches(pitchesInMeasures, referencePitches, transitionFactor = 10) {
     // Process the sequence of measures, each as a collection of pitches,
@@ -100,40 +101,34 @@ function assignReferencePitches(pitchesInMeasures, referencePitches, transitionF
 function collectPitchesTally() {
     // Collect all note pitches in the current score and return a tally as:
     //   Map<staffIndex, Map<measureIndex, Array<pitches>>>
-    var nStaves = curScore.ntracks / 4;
     var pitchesTally = new Map();
-    for (var staffIndex = 0; staffIndex < nStaves; ++staffIndex) {
-        pitchesTally.set(staffIndex, new Map());
-    }
     var measureIndex = 0;
     var measure = curScore.firstMeasure;
     while (measure) {
         Helpers.log(1, "Measure: " + measureIndex);
-        for (var staffIndex = 0; staffIndex < nStaves; ++staffIndex) {
-            Helpers.log(2, "Add tally for staff " + staffIndex + " and measure " + measureIndex);
-            var staffTally = pitchesTally.get(staffIndex)
-            staffTally.set(measureIndex, []);
-        }
         var segment = measure.firstSegment;
         while (segment) {
             Helpers.log(2, "Segment @ t=" + segment.tick + ": " + Segment.segmentTypeMap[segment.segmentType]);
             for (var trackIndex = 0; trackIndex < curScore.ntracks; ++trackIndex) {
-                var staffIndex = trackIndex / 4;
+                var staffIndex = Math.floor(trackIndex / 4);
+                // Ensure the inner map exists
+                if (!pitchesTally.has(staffIndex)) {
+                    pitchesTally.set(staffIndex, new Map());
+                }
                 var element = segment.elementAt(trackIndex);
                 if (element) {
                     if (element.type === Element.CHORD) {
-                        Helpers.log(3, "Chord: duration: " + element.duration.numerator + "/" + element.duration.denominator + 
+                        Helpers.log(3, "Chord: duration: " + element.duration.numerator + "/" + element.duration.denominator +
                             ", ticks: " + element.duration.ticks);
-                        var staffTally = pitchesTally.get(staffIndex)
-                        var measureTally = staffTally.get(measureIndex);
+                        // Ensure the array exists for the measure
+                        const staffTally = pitchesTally.get(staffIndex);
+                        if (!staffTally.has(measureIndex)) {
+                            staffTally.set(measureIndex, []);
+                        }
                         for (var noteIndex in element.notes) {
                             var note = element.notes[noteIndex];
-                            var octave = Math.floor(note.pitch / 12) - 1;
-                            measureTally.push(note.pitch);
-                            Helpers.log(4, "Note: " + Note.getTpcName(note.tpc) + octave + 
-                                ", pitch: " + note.pitch + ", track: " + trackIndex + 
-                                ", staff: " + staffIndex + ", voice: " + note.voice +
-                                ", accidental: ", + Note.getAccidentalName(note.accidentalType));
+                            staffTally.get(measureIndex).push(note.pitch);
+                            Note.logNote(note, 4);
                         }
                     }
                 }
@@ -191,7 +186,8 @@ function applyAssignedClefs(assignedClefsMap) {
                         var element = segment.elementAt(trackIndex);
                         if (element) {
                             if (element.type === Element.HEADERCLEF || element.type === Element.CLEF) {
-                                Helpers.log(3, "Clef " + element.clefType + " at staff " + trackIndex/4);
+                                Helpers.log(3, "Clef " + element.clefType + " at staff " + trackIndex / 4);
+                                // TODO: assign once API permitts
                                 // clefElement.clefType = newClef;
                                 // clef_present = true;
                             }
@@ -205,6 +201,7 @@ function applyAssignedClefs(assignedClefsMap) {
                     var clefElement = newElement(Element.CLEF);
                     clefElement.clefType = newClef;
                     clefElement.track = staff * 4; // Assuming each staff has 4 tracks
+                    // TODO: add once API permitts
                     // measure.addElement(clefElement);
                 }
             }

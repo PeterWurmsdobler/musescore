@@ -12,6 +12,8 @@
 //  the file LICENCE.GPL
 //=============================================================================
 
+.import "helpers.js" as Helpers
+
 function getAccidentalName(accidental) {
     // Return the name of the accidental, or "Unknown" if not found
     // Map the accidental to names
@@ -176,20 +178,22 @@ function setColour(note, newColour) {
     console.log("setColour: " + newColour);
 }
 
-function setShape(note, newShape) {
+function setShape(note, newShape, vOffset) {
     //set the note shape
-    if (newShape === "sharp") {
-        // note.headScheme = NoteHead.Scheme.HEAD_SOLFEGE
-        note.headGroup = 18//NoteHead.Group.HEAD_LA; // Square
-        note.offsetY = -0.25; // Sharp notes are drawn higher
+    // note.headScheme = NoteHead.Scheme.HEAD_SOLFEGE
+    if (newShape === "▲") {
+        note.headGroup = 5 //NoteHead.Group.??
     }
-    else if (newShape === "flat") {
-        // note.headScheme = NoteHead.Scheme.HEAD_SOLFEGE
-        note.headGroup = 18//NoteHead.Group.HEAD_LA; // Square
-        note.offsetY = 0.25; // Flat notes are drawn lower
+    else if (newShape === "▼") {
+        note.headGroup = 6 //NoteHead.Group.??
     }
-    // remove accidental all together
-    note.accidentalType = Accidental.NONE;
+    else if (newShape === "◆") {
+        note.headGroup = 9 //NoteHead.Group.??
+    }
+    else if (newShape === "▬") {
+        note.headGroup = 18 //NoteHead.Group.HEAD_LA; // Square
+    }
+    note.offsetY = vOffset;
     console.log("setShape: " + newShape);
 }
 
@@ -200,32 +204,56 @@ function setNoAccidentalSymbol(note) {
 
 // Define a class with two fields
 class NoteConfig {
-    constructor(flatColour, sharpColour, enforceEnharmonic, colourCodedNonNaturals, shapeCodedNonNaturals, noAccidentalSymbols) {
+    constructor(
+        flatColour,
+        sharpColour,
+        flatShape,
+        sharpShape,
+        flatOffset,
+        sharpOffset,
+        enforceEnharmonic,
+        noAccidentalSymbols) {
         this.flatColour = flatColour;
         this.sharpColour = sharpColour;
+        this.flatShape = flatShape;
+        this.sharpShape = sharpShape;
+        this.flatOffset = flatOffset;
+        this.sharpOffset = sharpOffset;
         this.enforceEnharmonic = enforceEnharmonic;
-        this.colourCodedNonNaturals = colourCodedNonNaturals;
-        this.shapeCodedNonNaturals = shapeCodedNonNaturals;
         this.noAccidentalSymbols = noAccidentalSymbols;
     }
 }
 
-function processNote(note, settings) {
-    if (settings.enforceEnharmonic) {
+function logNote(note, indent) {
+    var octave = Math.floor(note.pitch / 12) - 1;
+    var staffIndex = Math.floor(note.track / 4);
+    Helpers.log(indent, "Note: " + getTpcName(note.tpc) + octave +
+        ", pitch: " + note.pitch + ", track: " + note.track +
+        ", staff: " + staffIndex + ", voice: " + note.voice +
+        ", head Group: " + note.headGroup + ", headScheme: " + note.headScheme +
+        ", accidental: ", + getAccidentalName(note.accidentalType));
+}
+
+
+function processNote(note, config) {
+    if (config.enforceEnharmonic) {
         forceEnharmonic(note);
     }
     if (isFlat(note)) {
-        if (settings.colourCodedNonNaturals)
-            setColour(note, settings.flatColour);
-        if (settings.shapeCodedNonNaturals)
-            setShape(note, "flat");
+        if (config.flatColour)
+            setColour(note, config.flatColour);
+        if (config.flatShape)
+            setShape(note, config.flatShape, config.flatOffset);
+        if (config.noAccidentalSymbols && (config.sharpColour || config.sharpShape)) {
+            setNoAccidentalSymbol(note);
+        }
     } else if (isSharp(note)) {
-        if (settings.colourCodedNonNaturals)
-            setColour(note, settings.sharpColour);
-        if (settings.shapeCodedNonNaturals)
-            setShape(note, "sharp");
-    }
-    if (settings.noAccidentalSymbols) {
-        setNoAccidentalSymbol(note);
+        if (config.sharpColour)
+            setColour(note, config.sharpColour);
+        if (config.sharpShape)
+            setShape(note, config.sharpShape, config.sharpOffset);
+        if (config.noAccidentalSymbols && (config.sharpColour || config.sharpShape)) {
+            setNoAccidentalSymbol(note);
+        }
     }
 }

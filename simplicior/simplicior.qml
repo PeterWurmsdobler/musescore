@@ -1,12 +1,8 @@
 //=============================================================================
 //  MuseScore
 //  Music Composition & Notation
-// 
-//  The simplicior plugin that allows simplification of a score
-//  - only use one clef class per staff
-//  - enforce enharmonic spelling
-//  - colour encode non-naturals
-//  - shape encode non-naturals
+//
+//  The simplicior plugin that allows simplification of a score.
 //
 //  Copyright (c) 2025 Peter Wurmsdobler
 //
@@ -19,6 +15,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
+import QtQuick.Window
 
 import MuseScore 3.0
 import Muse.Ui
@@ -29,137 +27,286 @@ import "./src/note.js" as Note
 import "./src/helpers.js" as Helpers
 import "./src/clef_optimisation.js" as ClefOptimisation
 
-
 MuseScore {
-    version: "3.5"
+    id: mainWindow
+    version: "0.0.1"
     description: qsTr("A collection of measures to simplify traditional notation.")
-    title: "Simplicior Notation"
-    categoryCode: "notation"
-    thumbnailName: "simplicior.png"
     pluginType: "dialog"
     requiresScore: true
-    width: 300
-    height: 300
+    title: qsTr("Simplicior Notation")
+    thumbnailName: "simplicior.png"
+    categoryCode: "notation"
 
-    onRun: {}
+    // Compute dimension based on content
+    width: mainGrid.implicitWidth + extraLeft + extraRight
+    height: mainGrid.implicitHeight + extraTop + extraBottom
 
-    property bool enforceEnharmonic: true
+    property int extraMargin: mainGrid.anchors.margins ? mainGrid.anchors.margins : 0
+    property int extraTop: mainGrid.anchors.topMargin ? mainGrid.anchors.topMargin : extraMargin
+    property int extraBottom: mainGrid.anchors.bottomMargin ? mainGrid.anchors.bottomMargin : extraMargin
+    property int extraLeft: mainGrid.anchors.leftMargin ? mainGrid.anchors.leftMargin : extraMargin
+    property int extraRight: mainGrid.anchors.rightMargin ? mainGrid.anchors.rightMargin : extraMargin
+
+    // Simplicior properties
     property bool trebleClefOnly: true
+    property real trebleClefTransitionFactor: 5.0
     property bool colourCodedNonNaturals: true
-    property bool shapeCodedNonNaturals: true
-    property bool noAccidentalSymbols: false
     property color flatColour: "red"
     property color sharpColour: "blue"
-
+    property bool shapeCodedNonNaturals: true
+    property string flatShape: "▲"
+    property string sharpShape: "▼"
+    property bool uniqueNonNaturals: false
+    property string uniqueShape: "◆"
+    property bool enforceEnharmonic: true
+    property bool atonalSignature: true
+    property bool noAccidentalSymbols: true
 
     function doApply() {
         console.log("Hello Simplicior");
-        if (noAccidentalSymbols) {
-            Key.setAtonalKeySignature()
-        }   
-        const settings = new Note.NoteConfig(
-            flatColour,
-            sharpColour,
-            enforceEnharmonic,
-            trebleClefOnly,
-            colourCodedNonNaturals,
-            shapeCodedNonNaturals,
-            noAccidentalSymbols,
-        );
-        Helpers.applyToNotesInSelection(Note.processNote, settings);
+        if (atonalSignature) {
+            Key.setAtonalKeySignature();
+        }
         if (trebleClefOnly) {
             var pitchesTally = ClefOptimisation.collectPitchesTally();
-            const transitionFactor = trebleClefSlider.value;
-            var assignedClefsMap = ClefOptimisation.processPitchesTally(pitchesTally, transitionFactor);
+            var assignedClefsMap = ClefOptimisation.processPitchesTally(pitchesTally, trebleClefTransitionFactor);
             ClefOptimisation.applyAssignedClefs(assignedClefsMap);
         }
+        var _flatColour = colourCodedNonNaturals ? flatColour : null;
+        var _sharpColour = colourCodedNonNaturals ? sharpColour : null;
+        var _flatShape = shapeCodedNonNaturals ? flatShape : (uniqueNonNaturals ? uniqueShape : null);
+        var _sharpShape = shapeCodedNonNaturals ? sharpShape : (uniqueNonNaturals ? uniqueShape : null);
+        var _flatOffset = uniqueNonNaturals ? 0.25 : 0;
+        var _sharpOffset = uniqueNonNaturals ? -0.25 : 0;
+        const config = new Note.NoteConfig(_flatColour, _sharpColour, _flatShape, _sharpShape, _flatOffset, _sharpOffset, enforceEnharmonic, noAccidentalSymbols);
+        Helpers.applyToNotesInSelection(Note.processNote, config);
     }
 
-    ColumnLayout {
-        id: main
-        spacing: 2
+    GridLayout {
+        id: mainGrid
+        columns: 2 // Two columns
+        rowSpacing: 5 // Space between rows
+        columnSpacing: 5 // Space between columns
 
-        CheckBox {
-            id: enforceEnharmonicCheck
-            checked: enforceEnharmonic
-            text: qsTr("Enforce Enharmonics")
-            onClicked: {
-                enforceEnharmonic = !enforceEnharmonic;
-            }
-        }
-        CheckBox {
-            id: trebleClefOnlyCheck
-            checked: trebleClefOnly
-            text: qsTr("Treble Clef Only")
-            onClicked: {
-                trebleClefOnly = !trebleClefOnly;
-                trebleClefSlider.enabled = trebleClefOnly
-            }
-        }
-        Text {
-            text: qsTr("Cost of clef transitions") 
-        }
-        RowLayout {
-            spacing: 10
-            Text {
-                text: qsTr("No cost") 
-            }
-            Slider {
-                id: trebleClefSlider
-                from: 0
-                to: 10
-                value: 5 // Default value
-                stepSize: 0.1 
-                onValueChanged: {
-                    console.log("Slider value:", value);
+        GroupBox {
+            id: trebleClefOnlyGroup
+            Layout.row: 0
+            Layout.column: 0
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: 5
+            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+
+            label: CheckBox {
+                id: trebleClefOnlyCheck
+                checked: trebleClefOnly
+                text: qsTr("Treble Clef Only")
+                onClicked: {
+                    trebleClefOnly = !trebleClefOnly;
                 }
             }
-            Text {
-                text: qsTr("Max cost") 
+
+            ColumnLayout {
+                anchors.fill: parent
+                enabled: trebleClefOnly
+                Text {
+                    text: qsTr("Cost of transitions")
+                }
+                RowLayout {
+                    spacing: 5
+                    Text {
+                        text: qsTr("0")
+                    }
+                    Slider {
+                        id: trebleClefSlider
+                        from: 0
+                        to: 10
+                        value: trebleClefTransitionFactor
+                        stepSize: 0.1
+                        onValueChanged: {
+                            console.log("Slider value:", value);
+                        }
+                    }
+                    Text {
+                        text: qsTr("10")
+                    }
+                }
             }
-        }        
-        CheckBox {
-            id: colourCodedNonNaturalsCheck
-            checked: colourCodedNonNaturals
-            text: qsTr("Colour coded non-naturals")
-            onClicked: {
-                colourCodedNonNaturals = !colourCodedNonNaturals;
+        } // trebleClefOnlyGroup
+
+        GroupBox {
+            id: keyManagementGroup
+            title: " " + qsTr("Keys & Notes") + " "
+            Layout.row: 1
+            Layout.column: 0
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: 5
+            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+
+            ColumnLayout {
+                CheckBox {
+                    id: enforceEnharmonicCheck
+                    checked: enforceEnharmonic
+                    text: qsTr("Enforce Enharmonics")
+                    onClicked: {
+                        enforceEnharmonic = !enforceEnharmonic;
+                    }
+                }
+                CheckBox {
+                    id: atonalSignatureCheck
+                    checked: atonalSignature
+                    text: qsTr("Atonal Key Signature")
+                    onClicked: {
+                        atonalSignature = !atonalSignature;
+                    }
+                }
+            }
+        } // keyManagementGroup
+
+        GroupBox {
+            id: accidentalSymbolGroup
+            title: " " + qsTr("Symbols") + " "
+            Layout.row: 2
+            Layout.column: 0
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: 5
+            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+
+            ColumnLayout {
+                CheckBox {
+                    id: noAccidentalSymbolsCheck
+                    checked: noAccidentalSymbols
+                    text: qsTr("No flat/sharp symbols")
+                    onClicked: {
+                        noAccidentalSymbols = !noAccidentalSymbols;
+                    }
+                }
+            }
+        } // accidentalSymbolGroup
+
+        GroupBox {
+            id: colourCodedGroup
+            Layout.row: 0
+            Layout.column: 1
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: 5
+            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+
+            label: CheckBox {
+                id: colourCodedNonNaturalsCheck
+                checked: colourCodedNonNaturals
+                text: qsTr("Colour Coded Non-Naturals")
+                onClicked: {
+                    colourCodedNonNaturals = !colourCodedNonNaturals;
+                    noAccidentalSymbolsCheck.enabled = colourCodedNonNaturals || shapeCodedNonNaturals || uniqueNonNaturals;
+                    noAccidentalSymbols = noAccidentalSymbolsCheck.enabled && noAccidentalSymbols;
+                }
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                enabled: colourCodedNonNaturals
+                ColourSelection {
+                    id: colourSelectionFlat
+                    title: qsTr("Flats:")
+                    colour: flatColour
+                }
+                ColourSelection {
+                    id: colourSelectionSharp
+                    title: qsTr("Sharps:")
+                    colour: sharpColour
+                }
+            }
+        } // colourCodedGroup
+
+        GroupBox {
+            id: shapeEncodedGroup
+            Layout.row: 1
+            Layout.column: 1
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: 5
+            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+
+            label: CheckBox {
+                id: shapeCodedNonNaturalsCheck
+                checked: shapeCodedNonNaturals
+                text: qsTr("Shape Coded Non-Naturals")
+                onClicked: {
+                    shapeCodedNonNaturals = !shapeCodedNonNaturals;
+                    noAccidentalSymbolsCheck.enabled = colourCodedNonNaturals || shapeCodedNonNaturals || uniqueNonNaturals;
+                    noAccidentalSymbols = noAccidentalSymbolsCheck.enabled && noAccidentalSymbols;
+                    if (shapeCodedNonNaturals) {
+                        uniqueNonNaturals = false; // Disable uniqueNonNaturals if this is enabled
+                    }
+                }
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                enabled: shapeCodedNonNaturals
+                ShapeSelection {
+                    id: shapeSelectionFlat
+                    title: qsTr("Flats:")
+                    shape: flatShape
+                    shapes: ["▲", "▼"] // List of asymetric shapes
+                }
+                ShapeSelection {
+                    id: shapeSelectionSharp
+                    title: qsTr("Sharps:")
+                    shape: sharpShape
+                    shapes: ["▲", "▼"] // List of asymetric shapes
+                }
             }
         }
-        ColourSelection {
-            id: selectionFlat
-            title: qsTr("Flats:")
-            colour: flatColour
-            enabled: colourCodedNonNaturals
-        }
-        ColourSelection {
-            id: selectionSharp
-            title: qsTr("Sharps:")
-            colour: sharpColour
-            enabled: colourCodedNonNaturals
-        }
-        CheckBox {
-            id: shapeCodedNonNaturalsCheck
-            checked: shapeCodedNonNaturals
-            text: qsTr("Shape coded non-naturals")
-            onClicked: {
-                shapeCodedNonNaturals = !shapeCodedNonNaturals;
-                noAccidentalSymbolsCheck.enabled = shapeCodedNonNaturals
-                noAccidentalSymbols = shapeCodedNonNaturals && noAccidentalSymbols;
+
+        GroupBox {
+            id: uniqueNonNaturalsGroup
+            Layout.row: 2
+            Layout.column: 1
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: 5
+            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+
+            label: CheckBox {
+                id: uniqueNonNaturalsCheck
+                checked: uniqueNonNaturals
+                text: qsTr("Unique non-naturals")
+                onClicked: {
+                    uniqueNonNaturals = !uniqueNonNaturals;
+                    noAccidentalSymbolsCheck.enabled = colourCodedNonNaturals || shapeCodedNonNaturals || uniqueNonNaturals;
+                    noAccidentalSymbols = noAccidentalSymbolsCheck.enabled && noAccidentalSymbols;
+                    if (uniqueNonNaturals) {
+                        shapeCodedNonNaturals = false; // Disable shapeCodedNonNaturals if this is enabled
+                    }
+                }
             }
-        }
-        CheckBox {
-            id: noAccidentalSymbolsCheck
-            checked: noAccidentalSymbols
-            text: qsTr("No accidental symbols")
-            onClicked: {
-                noAccidentalSymbols = !noAccidentalSymbols;
+
+            ColumnLayout {
+                anchors.fill: parent
+                enabled: uniqueNonNaturals
+                ShapeSelection {
+                    id: shapeSelectionUnique
+                    title: qsTr("Sharps & Flats:")
+                    shape: uniqueShape
+                    shapes: ["◆", "▬"] // List of symetric shapes
+                }
             }
         }
 
         FlatButton {
             id: applyButton
-            width: 60
+            Layout.row: 3
+            Layout.column: 0
+            Layout.columnSpan: 2 // Span across both columns
+            Layout.fillWidth: true
+            Layout.margins: 5
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+
             text: qsTr("Apply")
             toolTipTitle: qsTr("Apply simplification")
             onClicked: doApply()
@@ -168,12 +315,28 @@ MuseScore {
     Settings {
         id: settings
         category: "PluginSimplicior"
-        property alias enforceEnharmonic: enforceEnharmonicCheck.checked
         property alias trebleClefOnly: trebleClefOnlyCheck.checked
+        property alias trebleClefTransitionFactor: trebleClefSlider.value
         property alias colourCodedNonNaturals: colourCodedNonNaturalsCheck.checked
+        property alias flatColour: colourSelectionFlat.colour
+        property alias sharpColour: colourSelectionSharp.colour
         property alias shapeCodedNonNaturals: shapeCodedNonNaturalsCheck.checked
+        property alias flatShape: shapeSelectionFlat.shape
+        property alias sharpShape: shapeSelectionSharp.shape
+        property alias uniqueNonNaturals: uniqueNonNaturalsCheck.checked
+        property alias uniqueShape: shapeSelectionUnique.shape
+        property alias enforceEnharmonic: enforceEnharmonicCheck.checked
         property alias noAccidentalSymbols: noAccidentalSymbolsCheck.checked
-        property alias flatColour: selectionFlat.colour
-        property alias sharpColour: selectionSharp.colour
+        property alias atonalSignature: atonalSignatureCheck.checked
+    }
+
+    // Palette for nice color management
+    SystemPalette {
+        id: sysActivePalette
+        colorGroup: SystemPalette.Active
+    }
+    SystemPalette {
+        id: sysDisabledPalette
+        colorGroup: SystemPalette.Disabled
     }
 }
