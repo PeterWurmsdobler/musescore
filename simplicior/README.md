@@ -1,12 +1,13 @@
 # Simplicior
 
-The objective of `Simplicior` is to make sheet music a bit simpler, less complex, and hence sight reading, too. Based on [Reducing the Cognitive Load in Reading Piano Sheet Music](https://medium.com/@peter-wurmsdobler/reducing-the-cognitive-load-in-reading-piano-sheet-music-a513aba01304), this plugin allows a combination of:
+The objective of `Simplicior` is to make sheet music a bit simpler, less complex, and hence sight-reading, too. Based on [Reducing the Cognitive Load in Reading Piano Sheet Music](https://medium.com/@peter-wurmsdobler/reducing-the-cognitive-load-in-reading-piano-sheet-music-a513aba01304), this plugin allows nearly any combination of the following options:
 
-- use only one clef class throughout for all voices width adaptive octave offsets in order to minimise ledger lines and keep notes mostly within a staff;
-- don't use double sharps or double flats and simply use the enharmonic equivalents, i.e. force the affected notes to be cast as their harmonic equivalent;
-- primary notes (white keys on the piano) altered in pitch through sharps or flats (black keys on the piano):
-  - change notehead colour (configurabl), e.g. red for flats, and blue for sharps,
-  - change notehead shape and position, e.g. square and slightly offset.
+- use only one clef class (treble) throughout with adaptive octave offsets to minimise ledger lines and keep notes mostly within a staff while avoiding too many transitions;
+- use only notes that represent the 12 tones in a C-major octave of equal temperament, no double flats or double sharps, i.e. enforce enharmonic notes;
+- use only the atonal signature, equivalent to C-major, to represent a score as if it was written in C-major and present all non-C-major notes as accidentals;
+- primary notes (white keys on the piano, equivalent to C-major) that are altered in pitch through sharps or flats (and become black keys on the piano), change note-head colour and/or shape, but keep their position;
+- alternatively, primary notes that are altered in pitch through sharps or flats and end up being tonally equivalent are represented by one unique note-head (and colour), but set at a common position;
+- optionally, if sharp or flat symbols (as well as the natural symbols in a key) become redundant due to colour or shape encoding, do not show these symbols.
 
 
 ## Notation issues
@@ -64,11 +65,4 @@ Selecting `Simplicior` from the MuseScore plugins menu opens up a dialogue windo
 
 ![Traditional](images/simplicior-plugin-dialog.png)
 
-There you can select the combination of simplifications to be carried out on the selected score, staff(s) or measure(s):
-
-- Enforce Enharmonic: this means in essence that there only 12 notes in a chromatic scale, on a piano seven white keys and 5 black keys. All notes such as double sharps or double flats or some sharps and flats will be resolved to their simplest representation, e.g. a C## is simply a D.
-in case the colour option is selected, choose the colour for flats and sharps,
-- Treble Clef Only: Optimise the score per staff such that a teble cleff (with necessary offsets in octaves) is chosen to keep all notes in a measure close to the centre of the staff (B2, B3, B4 or B5) while also minimising too many changes of clef along a staff. A cost is attributed to such changes. No cost will allow to change clef at every measure if necessary, max cost will minimise the cleff changes.
-- Colour-encoded non-naturals: all non-naturals, i.e. black keys on the piano, will be colour coded, choose the colour for flats and sharps.
-- Shape-encoded non-naturals: all non-naturals, i.e. black keys on the piano, will be shape coded, i.e. will be square note heads.
-- No accidental symbols (only with shape encoded non-naturals): in this case the key will be set to C-major (or atonal), i.e. all non-naturals will be marked with an accidental first. Then all resulting accidentals will be shown in square noteheads.
+There you can select the combination of simplifications to be carried out on the selected score, staff(s) or measure(s).
