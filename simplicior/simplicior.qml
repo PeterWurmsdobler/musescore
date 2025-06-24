@@ -57,7 +57,7 @@ MuseScore {
     property string flatShape: "▲"
     property string sharpShape: "▼"
     property bool uniqueNonNaturals: false
-    property string uniqueShape: "◆"
+    property string uniqueShape: "▬"
     property bool enforceEnharmonic: true
     property bool atonalSignature: true
     property bool noAccidentalSymbols: true

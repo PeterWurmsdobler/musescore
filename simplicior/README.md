@@ -3,7 +3,7 @@
 The objective of `Simplicior` is to make sheet music a bit simpler, less complex, and hence sight-reading, too. Based on [Reducing the Cognitive Load in Reading Piano Sheet Music](https://medium.com/@peter-wurmsdobler/reducing-the-cognitive-load-in-reading-piano-sheet-music-a513aba01304), this plugin allows nearly any combination of the following options:
 
 - use only one clef class (treble) throughout with adaptive octave offsets to minimise ledger lines and keep notes mostly within a staff while avoiding too many transitions;
-- use only notes that represent the 12 tones in a C-major octave of equal temperament, no double flats or double sharps, i.e. enforce enharmonic notes;
+- use only notes that represent the 12 tones in a chromatic scale of equal temperament, no double flats or double sharps, i.e. enforce enharmonic notes;
 - use only the atonal signature, equivalent to C-major, to represent a score as if it was written in C-major and present all non-C-major notes as accidentals;
 - primary notes (white keys on the piano, equivalent to C-major) that are altered in pitch through sharps or flats (and become black keys on the piano), change note-head colour and/or shape, but keep their position;
 - alternatively, primary notes that are altered in pitch through sharps or flats and end up being tonally equivalent are represented by one unique note-head (and colour), but set at a common position;
