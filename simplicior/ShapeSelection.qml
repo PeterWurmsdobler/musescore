@@ -15,13 +15,11 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import "./src/note.js" as Note
-
 RowLayout {
     id: root
-    property var shapes: Note.noteHeadShapes // List of shape names
-    property string shape: Note.noteHeadShapes[0] // Default shape
-    property string title: "Select Shape"
+    property var shapes // List of shape names
+    property string shape // Default shape
+    property string title
 
     spacing: 10 // Space between elements
 
@@ -36,6 +34,7 @@ RowLayout {
         onCurrentIndexChanged: {
             shape = model[currentIndex]; // Update the shape property when selection changes
             console.log("Selected shape:", shape);
+            root.shapeChanged(shape); // Emit the signal to notify the parent
         }
     }
 }

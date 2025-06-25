@@ -146,16 +146,19 @@ function processPitchesTally(pitchesTally, transitionFactor = 2) {
     // Process the collected note pitches and return a Map of staff indices to
     // the sequence of ideal clefs per measure
     // pitchesTally:Map<staffIndex, Map<measureIndex, Array<pitches>>>
-    // output: Map<staffIndex, Array<clef>>
+    // output: Map<staffIndex, Map<measureIndex,clef>>
     const referencePitches = Array.from(Clef.gClefsToMiddlePitches.values());
     var assignedClefsMap = new Map();
     for (const [staff, measures] of pitchesTally.entries()) {
         Helpers.log(0, "Staff " + staff + ":");
         const measureList = Array.from(measures.values());
         const assignedReferences = assignReferencePitches(measureList, referencePitches, transitionFactor);
-        const assignedClefs = assignedReferences.map(pitch => {
+        const assignedClefsList = assignedReferences.map(pitch => {
             return Clef.middlePitchesToClefs.get(pitch);
         });
+        const measureIndices = Array.from(measures.keys());
+        const assignedClefs = new Map(measureIndices.map((key, index) => [key, assignedClefsList[index]]));
+
         assignedClefsMap.set(staff, assignedClefs);
         Helpers.log(0, "Assigned References:", assignedClefs);
     }
@@ -163,9 +166,30 @@ function processPitchesTally(pitchesTally, transitionFactor = 2) {
     return assignedClefsMap;
 }
 
+function _findClefElementInMeasure(measure, staffIndex) {
+    // Find the clef element in the measure for the given staff index
+    var segment = measure.firstSegment;
+    while (segment) {
+        for (var trackIndex = 0; trackIndex < curScore.ntracks; ++trackIndex) {
+            var currentStaffIndex = Math.floor(trackIndex / 4);
+            if (currentStaffIndex === staffIndex) {
+                var element = segment.elementAt(trackIndex);
+                if (element) {
+                    if (element.type == Element.HEADERCLEF || element.type == Element.CLEF) {
+                        Helpers.log(2, "Clef " + element.clefType + " found");
+                        return element
+                    }
+                }
+            }
+        }
+        segment = segment.nextInMeasure;
+    }
+    return null;
+}
+
 function applyAssignedClefs(assignedClefsMap) {
     // Apply the ideal sequence of clefs to the measures in the score
-    // assignedClefsMap: Map<staffIndex, Array<clef>>
+    // assignedClefsMap: Map<staffIndex, Map<measureIndex,clef>>
     for (const [staff, assignedClefs] of assignedClefsMap.entries()) {
         Helpers.log(0, "Applying reference pitches for staff " + staff);
         var measureIndex = 0;
@@ -173,36 +197,42 @@ function applyAssignedClefs(assignedClefsMap) {
         var measure = curScore.firstMeasure;
         while (measure) {
             Helpers.log(1, "Measure: " + measureIndex);
-            var newClef = assignedClefs[measureIndex];
-            if (newClef !== currentClef) {
-                Helpers.log(2, "New reference pitch for measure " + measureIndex + ": " + newClef);
-                currentClef = newClef;
-                var segment = measure.firstSegment;
 
-                // Try to find the clef element in the segments of this measure
-                var clef_present = false;
-                while (segment) {
-                    for (var trackIndex = 0; trackIndex < curScore.ntracks; ++trackIndex) {
-                        var element = segment.elementAt(trackIndex);
-                        if (element) {
-                            if (element.type === Element.HEADERCLEF || element.type === Element.CLEF) {
-                                Helpers.log(3, "Clef " + element.clefType + " at staff " + trackIndex / 4);
-                                // TODO: assign once API permitts
-                                // clefElement.clefType = newClef;
-                                // clef_present = true;
-                            }
-                        }
+            // Try to find the clef element in the measure
+            var clef_element = _findClefElementInMeasure(measure, staff);
+            
+            // If there is a new clef assigned for this measure, update or create the clef element
+            if (assignedClefs.has(measureIndex)) {
+                var newClef = assignedClefs.get(measureIndex);
+                if (newClef !== currentClef) {
+                    Helpers.log(2, "New clef at measure " + measureIndex + ": " + newClef);
+                    currentClef = newClef;
+                    if (clef_element == null) {
+                        // No clef found, create a new clef element
+                        Helpers.log(3, "Creating new clef element: " + newClef);
+                        // var clefElement = newElement(Element.CLEF);
+                        // clefElement.clefType = newClef;
+                        // TODO: add once API permitts
+                        // measure.addElement(clefElement);
                     }
-                    segment = segment.nextInMeasure;
+                    else {
+                        Helpers.log(3, "Assigning clef element to: " + newClef);
+                        // TODO: assign once API permitts
+                        // clef_element.clefType = newClef;
+                    }
                 }
-                if (!clef_present) {
-                    // No clef found, create a new clef element
-                    Helpers.log(3, "Creating new clef element for staff " + staff + ": " + newClef);
-                    var clefElement = newElement(Element.CLEF);
-                    clefElement.clefType = newClef;
-                    clefElement.track = staff * 4; // Assuming each staff has 4 tracks
-                    // TODO: add once API permitts
-                    // measure.addElement(clefElement);
+            } else {
+                // If there is no new clef assigned for this measure and the clef element exists:
+                if (clef_element != null) {
+                    if (clef_element.type == Element.HEADERCLEF) {
+                        Helpers.log(3, "Assigning clef element to: " + currentClef);
+                        // TODO: assign once API permitts
+                        // clef_element.clefType = currentClef;
+                    }
+                    else {
+                        Helpers.log(3, "Removing clef element: " + clef_element.clefType);
+                        // TODO: remove the clef element if it exists
+                    }
                 }
             }
 

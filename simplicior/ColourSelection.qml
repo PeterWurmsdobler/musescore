@@ -93,6 +93,7 @@ RowLayout {
                     text: qsTr("Done")
                     onClicked: {
                         colorPopup.close(); // Close the popup
+                        root.colourChanged(colour); // Emit the signal to notify the parent
                     }
                 }
             }

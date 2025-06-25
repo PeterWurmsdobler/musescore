@@ -213,11 +213,17 @@ MuseScore {
                     id: colourSelectionFlat
                     title: qsTr("Flats:")
                     colour: flatColour
+                    onColourChanged: {
+                        flatColour = colour;
+                    }
                 }
                 ColourSelection {
                     id: colourSelectionSharp
                     title: qsTr("Sharps:")
                     colour: sharpColour
+                    onColourChanged: {
+                        sharpColour = colour;
+                    }
                 }
             }
         } // colourCodedGroup
@@ -253,12 +259,18 @@ MuseScore {
                     title: qsTr("Flats:")
                     shape: flatShape
                     shapes: ["▲", "▼"] // List of asymetric shapes
+                    onShapeChanged: {
+                        flatShape = shape;
+                    }
                 }
                 ShapeSelection {
                     id: shapeSelectionSharp
                     title: qsTr("Sharps:")
                     shape: sharpShape
                     shapes: ["▲", "▼"] // List of asymetric shapes
+                    onShapeChanged: {
+                        sharpShape = shape;
+                    }
                 }
             }
         }
@@ -294,6 +306,9 @@ MuseScore {
                     title: qsTr("Sharps & Flats:")
                     shape: uniqueShape
                     shapes: ["◆", "▬"] // List of symetric shapes
+                    onShapeChanged: {
+                        uniqueShape = shape;
+                    }
                 }
             }
         }
@@ -315,19 +330,19 @@ MuseScore {
     Settings {
         id: settings
         category: "PluginSimplicior"
-        property alias trebleClefOnly: trebleClefOnlyCheck.checked
-        property alias trebleClefTransitionFactor: trebleClefSlider.value
-        property alias colourCodedNonNaturals: colourCodedNonNaturalsCheck.checked
-        property alias flatColour: colourSelectionFlat.colour
-        property alias sharpColour: colourSelectionSharp.colour
-        property alias shapeCodedNonNaturals: shapeCodedNonNaturalsCheck.checked
-        property alias flatShape: shapeSelectionFlat.shape
-        property alias sharpShape: shapeSelectionSharp.shape
-        property alias uniqueNonNaturals: uniqueNonNaturalsCheck.checked
-        property alias uniqueShape: shapeSelectionUnique.shape
-        property alias enforceEnharmonic: enforceEnharmonicCheck.checked
-        property alias noAccidentalSymbols: noAccidentalSymbolsCheck.checked
-        property alias atonalSignature: atonalSignatureCheck.checked
+        property alias trebleClefOnly: mainWindow.trebleClefOnly
+        property alias trebleClefTransitionFactor: mainWindow.trebleClefTransitionFactor
+        property alias colourCodedNonNaturals: mainWindow.colourCodedNonNaturals
+        property alias flatColour: mainWindow.flatColour
+        property alias sharpColour: mainWindow.sharpColour
+        property alias shapeCodedNonNaturals: mainWindow.shapeCodedNonNaturals
+        property alias flatShape: mainWindow.flatShape
+        property alias sharpShape: mainWindow.sharpShape
+        property alias uniqueNonNaturals: mainWindow.uniqueNonNaturals
+        property alias uniqueShape: mainWindow.uniqueShape
+        property alias enforceEnharmonic: mainWindow.enforceEnharmonic
+        property alias noAccidentalSymbols: mainWindow.noAccidentalSymbols
+        property alias atonalSignature: mainWindow.atonalSignature
     }
 
     // Palette for nice color management
