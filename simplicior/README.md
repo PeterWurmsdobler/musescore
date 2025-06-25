@@ -65,4 +65,7 @@ Selecting `Simplicior` from the MuseScore plugins menu opens up a dialogue windo
 
 ![Traditional](images/simplicior-plugin-dialog.png)
 
-There you can select the combination of simplifications to be carried out on the selected score, staff(s) or measure(s).
+There you can select the combination of simplifications to be carried out on the selected score, staff(s) or measure(s). Currently there are some limitations:
+
+- The "Treble Clef Only" options does carry out the analysis and computes an ideal sequence of clefs; however, these clefs cannot be set through the plugin API (yet).
+- The "Atonal Key Signature" does in principle go through all measures and attempts to set the key signature to "atonal"; however, these key signature cannot be set through the plugin API (yet).

@@ -287,7 +287,7 @@ MuseScore {
             label: CheckBox {
                 id: uniqueNonNaturalsCheck
                 checked: uniqueNonNaturals
-                text: qsTr("Unique non-naturals")
+                text: qsTr("Unique non-natural shapes")
                 onClicked: {
                     uniqueNonNaturals = !uniqueNonNaturals;
                     noAccidentalSymbolsCheck.enabled = colourCodedNonNaturals || shapeCodedNonNaturals || uniqueNonNaturals;
