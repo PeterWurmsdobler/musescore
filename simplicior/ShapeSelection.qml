@@ -34,7 +34,7 @@ RowLayout {
         onCurrentIndexChanged: {
             shape = model[currentIndex]; // Update the shape property when selection changes
             console.log("Selected shape:", shape);
-            root.shapeChanged(shape); // Emit the signal to notify the parent
+            root.shapeChanged(); // Emit the signal to notify the parent
         }
     }
 }
