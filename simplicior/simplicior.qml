@@ -35,7 +35,7 @@ MuseScore {
     requiresScore: true
     title: qsTr("Simplicior Notation")
     thumbnailName: "simplicior.png"
-    categoryCode: "notation"
+    categoryCode: "Simplified notation"
 
     // Compute dimension based on content
     width: mainGrid.implicitWidth + extraLeft + extraRight

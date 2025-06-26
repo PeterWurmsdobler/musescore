@@ -22,9 +22,9 @@
 //=============================================================================
 
 .import "note.js" as Note
-    .import "helpers.js" as Helpers
-        .import "segment.js" as Segment
-            .import "clef.js" as Clef
+.import "helpers.js" as Helpers
+.import "segment.js" as Segment
+.import "clef.js" as Clef
 
 function assignReferencePitches(pitchesInMeasures, referencePitches, transitionFactor = 10) {
     // Process the sequence of measures, each as a collection of pitches,

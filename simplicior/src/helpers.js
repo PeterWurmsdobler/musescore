@@ -16,21 +16,23 @@
 // function to every note in the current selection or to all notes in the
 // score if there is no selection.  
 function applyToNotesInSelection(func, arg) {
+    curScore.startCmd();
+    
     var selectionWasEmpty = (curScore.selection.elements.length == 0);
     if (selectionWasEmpty) {
-        console.log("selectionWasEmpty");
-        cmd("select-all");
+        console.log("selectionWasEmpty, selecting all notes");
+        curScore.selection.selectRange(0, curScore.lastSegment.tick + 1, 0, curScore.nstaves);
     }
-    curScore.startCmd();
-    console.log("going through elements");
+    console.log("Applying function to all elements");
     for (var i in curScore.selection.elements)
         if (curScore.selection.elements[i].type == Element.NOTE)
             func(curScore.selection.elements[i], arg);
-    curScore.endCmd();
+
     if (selectionWasEmpty) {
-        console.log("selectionWasEmpty");
-        cmd("escape");
+        console.log("selectionWasEmpty, clearing selection");
+        curScore.selection.clear(); // Clear the selection after applying the function
     }
+    curScore.endCmd();
 }
 
 function log(nIndent, message) {
