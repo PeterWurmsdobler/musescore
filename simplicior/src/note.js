@@ -198,8 +198,9 @@ function setShape(note, newShape, vOffset) {
 }
 
 function setNoAccidentalSymbol(note) {
-    //set the note accidental to none
-    note.accidentalType = Accidental.NONE;
+    if (note.accidentalType){
+        note.accidental.visible = false;
+    }
 }
 
 // Define a class with two fields
@@ -244,7 +245,7 @@ function processNote(note, config) {
             setColour(note, config.flatColour);
         if (config.flatShape)
             setShape(note, config.flatShape, config.flatOffset);
-        if (config.noAccidentalSymbols && (config.sharpColour || config.sharpShape)) {
+        if (config.noAccidentalSymbols && (config.flatColour || config.flatShape)) {
             setNoAccidentalSymbol(note);
         }
     } else if (isSharp(note)) {
